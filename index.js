@@ -7,5 +7,17 @@ app.listen(port, () => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Node.js");
+  res.send("Hello, Node.js!");
+});
+
+const customers = [
+  { title: "John", id: 1 },
+  { title: "Adam", id: 2 },
+  { title: "Emma", id: 3 },
+  { title: "Sophia", id: 4 },
+  { title: "William", id: 5 },
+];
+
+app.get("/api/customers", (req, res) => {
+  res.send(customers);
 });
