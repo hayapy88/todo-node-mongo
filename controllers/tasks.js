@@ -27,8 +27,20 @@ const getSingleTask = async (req, res) => {
     res.status(500).json(err);
   }
 };
-const updateTask = (req, res) => {
-  res.send("Updated a specified task");
+const updateTask = async (req, res) => {
+  try {
+    const updateTask = await Task.findOneAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
+    if (!updateTask) {
+      return res.status(404).json(`_id: ${req.params.id} is not found.`);
+    }
+    res.status(200).json(updateTask);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 const deleteTask = (req, res) => {
   res.send("Deleted a specified task");
