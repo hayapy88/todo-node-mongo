@@ -1,6 +1,7 @@
 const todoTasksListEl = document.getElementById("todoTasksList");
 const formEl = document.getElementById("addTaskForm");
 const taskNameEl = document.getElementById("taskName");
+const deleteBtnEl = document.querySelector(".deleteBtn");
 
 const displayTasks = async () => {
   try {
@@ -12,13 +13,13 @@ const displayTasks = async () => {
         return `<div class="box is-flex is-justify-content-space-between">
         <h3 class="subtitle mb-0">${task.name}</h3>
         <div>
-          <a
+          <button
             ><span class="icon">
               <i class="fa solid fa-pen-to-square"></i> </span
-          ></a>
-          <a
+          ></button>
+          <button class="deleteBtn" data-id=${task._id}
             ><span class="icon"> <i class="fa solid fa-trash"></i> </span
-          ></a>
+          ></button>
         </div>
       </div>`;
       })
@@ -40,5 +41,21 @@ formEl.addEventListener("submit", async (e) => {
     taskNameEl.value = "";
   } catch (err) {
     console.log(err);
+  }
+});
+
+todoTasksListEl.addEventListener("click", async (e) => {
+  const element = e.target;
+  console.log(element.parentElement.parentElement);
+  const id = element.parentElement.parentElement.dataset.id;
+  console.log(id);
+  if (element.parentElement.parentElement.classList.contains("deleteBtn")) {
+    console.log("Delete button clicked");
+    try {
+      await axios.delete(`/api/v1/tasks/${id}`);
+      displayTasks();
+    } catch (err) {
+      console.log(err);
+    }
   }
 });
