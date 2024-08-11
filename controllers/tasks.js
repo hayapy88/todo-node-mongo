@@ -16,8 +16,16 @@ const createTask = async (req, res) => {
     res.status(500).json(err);
   }
 };
-const getSingleTask = (req, res) => {
-  res.send("Got a specified task");
+const getSingleTask = async (req, res) => {
+  try {
+    const singleTask = await Task.findOne({ _id: req.params.id });
+    if (!singleTask) {
+      return res.status(404).json(`_id: ${req.params.id} is not found.`);
+    }
+    res.status(200).json(singleTask);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 const updateTask = (req, res) => {
   res.send("Updated a specified task");
