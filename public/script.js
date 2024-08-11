@@ -7,6 +7,11 @@ const displayTasks = async () => {
   try {
     const { data: tasks } = await axios.get("/api/v1/tasks");
 
+    if (tasks.length < 1) {
+      todoTasksListEl.innerHTML = "<p>This is no task now.</p>";
+      return;
+    }
+
     const allTasks = tasks
       .map((task) => {
         const { completed, _id, name } = task;
