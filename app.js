@@ -13,7 +13,10 @@ app.use("/api/v1/tasks", taskRoute);
 const start = async () => {
   try {
     await connectDB(process.env.DATABASE_URL);
-    app.listen(port, console.log(`ToDo app listening on port ${port}`));
+    app.listen(
+      process.env.port || port,
+      console.log(`ToDo app listening on port ${port}`)
+    );
   } catch (err) {
     console.log(err);
   }
