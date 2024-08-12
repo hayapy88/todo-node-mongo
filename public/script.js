@@ -17,8 +17,15 @@ const displayTasks = async () => {
         const { completed, _id, name } = task;
         return `<div class="box">
           <div class="columns is-mobile">
-            <div class="column is-10">
-              <h3 class="subtitle mb-0">${name}</h3>
+            <div class="column is-10" style="position: relative">
+              ${
+                completed
+                  ? '<i class="fa-solid fa-circle-check has-text-success" style="position: absolute;left: -4px;top: 50%;transform: translateY(-50%);font-size: 13px;"></i>'
+                  : ""
+              }
+              <h3 class="subtitle mb-0" style="${
+                completed && "text-decoration: line-through"
+              }">${name}</h3>
             </div>
             <div class="column is-2 is-flex is-justify-content-flex-end">
               <button class="editModalBtn modal-button js-modal-trigger" data-id="${_id}" data-target="editTaskModal">
@@ -159,6 +166,7 @@ const putEditTask = async (taskId) => {
             name: editTaskNameVal,
             completed: editTaskCompletedBool,
           });
+          displayTasks();
           showEditMessage(
             "The task was edited successfully!",
             "is-success",
