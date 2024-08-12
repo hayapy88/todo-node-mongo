@@ -15,9 +15,11 @@ const start = async () => {
     await connectDB(
       process.env.HEROKU_DATABASE_URL || process.env.DATABASE_URL
     );
-    app.listen(port, console.log(`ToDo app listening on port ${port}`));
+    app.listen(port, () => {
+      console.log(`ToDo app listening on port ${port}`);
+    });
   } catch (err) {
-    console.log(err);
+    console.error("Error starting the server:", err);
   }
 };
 start();
