@@ -16,18 +16,26 @@ const displayTasks = async () => {
     const allTasks = tasks
       .map((task) => {
         const { completed, _id, name } = task;
-        return `<div class="box is-flex is-justify-content-space-between">
-        <h3 class="subtitle mb-0">${task.name}</h3>
-        <div>
-          <button
-            ><span class="icon">
-              <i class="fa solid fa-pen-to-square"></i> </span
-          ></button>
-          <button class="deleteBtn" data-id=${task._id}
-            ><span class="icon"> <i class="fa solid fa-trash"></i> </span
-          ></button>
+        return `<div class="box">
+          <div class="columns is-mobile">
+            <div class="column is-10">
+              <h3 class="subtitle mb-0">${task.name}</h3>
+            </div>
+            <div class="column is-2 is-flex is-justify-content-flex-end">
+              <button>
+                <span class="icon">
+                  <i class="fa solid fa-pen-to-square"></i>
+                </span>
+              </button>
+              <button class="deleteBtn ml-1" data-id="${task._id}">
+                <span class="icon">
+                  <i class="fa solid fa-trash"></i>
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
-      </div>`;
+        `;
       })
       .join("");
     todoTasksListEl.innerHTML = allTasks;
@@ -49,6 +57,12 @@ formEl.addEventListener("submit", async (e) => {
       messageEl.className = "is-hidden help mb-3";
     }, 3000);
   };
+
+  if (!taskNameVal.length) {
+    return showMessage("Task name is required.", "is-danger");
+  } else if (taskNameVal.length > 50) {
+    return showMessage("Task name must be 50 characters or less.", "is-danger");
+  }
 
   try {
     await axios.post("/api/v1/tasks", { name: taskNameVal });
