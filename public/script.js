@@ -24,19 +24,19 @@ const displayTasks = async () => {
                   ? '<i class="fa-solid fa-circle-check has-text-success" style="position: absolute;left: -4px;top: 50%;transform: translateY(-50%);font-size: 13px;"></i>'
                   : ""
               }
-              <h3 class="subtitle mb-0" style="${
+              <h3 class="subtitle is-5 mb-0" style="${
                 completed && "text-decoration: line-through"
               }">${name}</h3>
             </div>
             <div class="column is-2 is-flex is-justify-content-flex-end">
               <button class="editModalBtn modal-button js-modal-trigger" data-id="${_id}" data-target="editTaskModal">
                 <span class="icon">
-                  <i class="fa solid fa-pen-to-square"></i>
+                  <i class="fa solid fa-pen-to-square has-text-success"></i>
                 </span>
               </button>
               <button class="deleteBtn ml-1" data-id="${_id}">
                 <span class="icon">
-                  <i class="fa solid fa-trash"></i>
+                  <i class="fa solid fa-trash has-text-danger"></i>
                 </span>
               </button>
             </div>
@@ -93,7 +93,7 @@ const putEditTask = async (taskId) => {
     const { completed, _id, name } = task;
     const status = task.completed ? "checked" : "";
     modalContentEl.innerHTML = `<div class="box">
-        <p class="title">Edit the Task</p>
+        <p class="title is-4">Edit the Task</p>
         <form id="editTaskForm">
           <div class="columns is-mobile">
             <div class="column is-3">ID</div>
