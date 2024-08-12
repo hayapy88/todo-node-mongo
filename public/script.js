@@ -1,7 +1,6 @@
 const todoTasksListEl = document.getElementById("todoTasksList");
 const formEl = document.getElementById("addTaskForm");
 const taskNameEl = document.getElementById("taskName");
-const deleteBtnEl = document.querySelector(".deleteBtn");
 const messageEl = document.getElementById("message");
 
 const displayTasks = async () => {
@@ -19,15 +18,15 @@ const displayTasks = async () => {
         return `<div class="box">
           <div class="columns is-mobile">
             <div class="column is-10">
-              <h3 class="subtitle mb-0">${task.name}</h3>
+              <h3 class="subtitle mb-0">${name}</h3>
             </div>
             <div class="column is-2 is-flex is-justify-content-flex-end">
-              <button>
+              <button class="editModalBtn modal-button js-modal-trigger" data-id="${_id}" data-target="editTaskModal">
                 <span class="icon">
                   <i class="fa solid fa-pen-to-square"></i>
                 </span>
               </button>
-              <button class="deleteBtn ml-1" data-id="${task._id}">
+              <button class="deleteBtn ml-1" data-id="${_id}">
                 <span class="icon">
                   <i class="fa solid fa-trash"></i>
                 </span>
@@ -46,17 +45,16 @@ const displayTasks = async () => {
 displayTasks();
 
 formEl.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const taskNameVal = taskNameEl.value;
-
   const showMessage = (message, type) => {
     messageEl.className = `is-block help mb-3 ${type}`;
-    messageEl.innerHTML = message;
+    messageEl.textContent = message;
     setTimeout(() => {
-      messageEl.innerHTML = "";
+      messageEl.textContent = "";
       messageEl.className = "is-hidden help mb-3";
     }, 3000);
   };
+  e.preventDefault();
+  const taskNameVal = taskNameEl.value;
 
   if (!taskNameVal.length) {
     return showMessage("Task name is required.", "is-danger");
@@ -78,12 +76,165 @@ formEl.addEventListener("submit", async (e) => {
   }
 });
 
+const putEditTask = async (taskId) => {
+  const modalContentEl = document.querySelector(".modal-content");
+
+  try {
+    const { data: task } = await axios.get(`/api/v1/tasks/${taskId}`);
+    console.log(task);
+    const { completed, _id, name } = task;
+    const status = task.completed ? "checked" : "";
+    modalContentEl.innerHTML = `<div class="box">
+        <p class="title">Edit the Task</p>
+        <form id="editTaskForm">
+          <div class="columns is-mobile">
+            <div class="column is-3">ID</div>
+            <p id="editTaskId" class="column is-9">${_id}</p>
+          </div>
+          <div class="columns is-mobile">
+            <div
+              class="column is-3 is-flex is-align-items-center"
+              style="line-height: 1.2"
+            >
+              Task Name
+            </div>
+            <div class="column is-9 control">
+              <input
+                type="text"
+                id ="editTaskName"
+                class="input"
+                value="${name}"
+              />
+            </div>
+          </div>
+          <div>
+            <label class="checkbox">
+              <input type="checkbox" id="editTaskCompleted" ${status} />
+              Completed
+            </label>
+          </div>
+
+          <button type="submit" class="button is-primary mt-5">Save change</button>
+          <p id="editMessage" class="is-hidden help mb-3"></p>
+        </form>
+        <!-- Your content -->
+      </div>
+    `;
+    document
+      .getElementById("editTaskForm")
+      .addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const editMessageEl = document.getElementById("editMessage");
+        const showEditMessage = (message, type, reload = false) => {
+          editMessageEl.className = `is-block help ${type}`;
+          editMessageEl.textContent = message;
+          setTimeout(() => {
+            editMessageEl.textContent = "";
+            editMessageEl.className = "is-hidden help";
+            if (reload) {
+              location.reload();
+            }
+          }, 3000);
+        };
+
+        const editTaskIdVal = document.getElementById("editTaskId").innerText;
+        console.log(editTaskIdVal);
+        const editTaskNameVal = document.getElementById("editTaskName").value;
+        console.log(editTaskNameVal);
+        const editTaskCompletedBool =
+          document.getElementById("editTaskCompleted").checked;
+        console.log(editTaskCompletedBool);
+
+        if (!editTaskNameVal.length) {
+          return showEditMessage("Task name is required.", "is-danger");
+        } else if (editTaskNameVal.length > 50) {
+          return showEditMessage(
+            "Task name must be 50 characters or less.",
+            "is-danger"
+          );
+        }
+
+        try {
+          await axios.patch(`/api/v1/tasks/${editTaskIdVal}`, {
+            name: editTaskNameVal,
+            completed: editTaskCompletedBool,
+          });
+          showEditMessage(
+            "The task was edited successfully!",
+            "is-success",
+            true
+          );
+        } catch (err) {
+          console.log(err);
+          showEditMessage(
+            "An error occurred on the server. Please try again later.",
+            "is-danger"
+          );
+        }
+      });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 todoTasksListEl.addEventListener("click", async (e) => {
   const element = e.target;
-  const deleteButton = element.closest(".deleteBtn");
+  const editModalBtnEl = element.closest(".editModalBtn");
+  const deleteBtnEl = element.closest(".deleteBtn");
 
-  if (deleteButton) {
-    const id = deleteButton.dataset.id;
+  function openModal($el) {
+    $el.classList.add("is-active");
+  }
+
+  function closeModal($el) {
+    $el.classList.remove("is-active");
+  }
+
+  function closeAllModals() {
+    (document.querySelectorAll(".modal") || []).forEach(($modal) => {
+      closeModal($modal);
+    });
+  }
+
+  (document.querySelectorAll(".js-modal-trigger") || []).forEach(($trigger) => {
+    const modal = $trigger.dataset.target;
+    const $target = document.getElementById(modal);
+
+    $trigger.addEventListener("click", () => {
+      console.log("clicked");
+
+      openModal($target);
+    });
+  });
+
+  (
+    document.querySelectorAll(
+      ".modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button"
+    ) || []
+  ).forEach(($close) => {
+    const $target = $close.closest(".modal");
+
+    $close.addEventListener("click", () => {
+      closeModal($target);
+    });
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeAllModals();
+    }
+  });
+
+  if (editModalBtnEl) {
+    const taskId = editModalBtnEl.dataset.id;
+    const modalId = editModalBtnEl.dataset.target;
+    const modal = document.getElementById(modalId);
+    openModal(modal);
+    putEditTask(taskId);
+  }
+
+  if (deleteBtnEl) {
+    const id = deleteBtnEl.dataset.id;
     console.log("Delete button clicked", id);
 
     try {
