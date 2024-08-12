@@ -2,13 +2,14 @@ const todoTasksListEl = document.getElementById("todoTasksList");
 const formEl = document.getElementById("addTaskForm");
 const taskNameEl = document.getElementById("taskName");
 const deleteBtnEl = document.querySelector(".deleteBtn");
+const messageEl = document.getElementById("message");
 
 const displayTasks = async () => {
   try {
     const { data: tasks } = await axios.get("/api/v1/tasks");
 
     if (tasks.length < 1) {
-      todoTasksListEl.innerHTML = "<p>This is no task now.</p>";
+      todoTasksListEl.innerHTML = "<p>There are no tasks right now.</p>";
       return;
     }
 
@@ -40,12 +41,26 @@ formEl.addEventListener("submit", async (e) => {
   e.preventDefault();
   const taskNameVal = taskNameEl.value;
 
+  const showMessage = (message, type) => {
+    messageEl.className = `is-block help mb-3 ${type}`;
+    messageEl.innerHTML = message;
+    setTimeout(() => {
+      messageEl.innerHTML = "";
+      messageEl.className = "is-hidden help mb-3";
+    }, 3000);
+  };
+
   try {
     await axios.post("/api/v1/tasks", { name: taskNameVal });
     displayTasks();
     taskNameEl.value = "";
+    showMessage("The task was added successfully!", "is-success");
   } catch (err) {
     console.log(err);
+    showMessage(
+      "An error occurred on the server. Please try again later.",
+      "is-danger"
+    );
   }
 });
 
