@@ -80,11 +80,12 @@ formEl.addEventListener("submit", async (e) => {
 
 todoTasksListEl.addEventListener("click", async (e) => {
   const element = e.target;
-  console.log(element.parentElement.parentElement);
-  const id = element.parentElement.parentElement.dataset.id;
-  console.log(id);
-  if (element.parentElement.parentElement.classList.contains("deleteBtn")) {
-    console.log("Delete button clicked");
+  const deleteButton = element.closest(".deleteBtn");
+
+  if (deleteButton) {
+    const id = deleteButton.dataset.id;
+    console.log("Delete button clicked", id);
+
     try {
       await axios.delete(`/api/v1/tasks/${id}`);
       displayTasks();
