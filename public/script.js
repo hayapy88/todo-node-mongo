@@ -2,6 +2,7 @@ const todoTasksListEl = document.getElementById("todoTasksList");
 const formEl = document.getElementById("addTaskForm");
 const taskNameEl = document.getElementById("taskName");
 const messageEl = document.getElementById("message");
+const editTaskModalEl = document.getElementById("editTaskModal");
 
 const displayTasks = async () => {
   try {
@@ -132,14 +133,14 @@ const putEditTask = async (taskId) => {
       .addEventListener("submit", async (e) => {
         e.preventDefault();
         const editMessageEl = document.getElementById("editMessage");
-        const showEditMessage = (message, type, reload = false) => {
+        const showEditMessage = (message, type, close = false) => {
           editMessageEl.className = `is-block help ${type}`;
           editMessageEl.textContent = message;
           setTimeout(() => {
             editMessageEl.textContent = "";
             editMessageEl.className = "is-hidden help";
-            if (reload) {
-              location.reload();
+            if (close) {
+              editTaskModalEl.classList.remove("is-active");
             }
           }, 3000);
         };
