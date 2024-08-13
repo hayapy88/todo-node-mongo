@@ -122,7 +122,7 @@ const putEditTask = async (taskId) => {
             </label>
           </div>
 
-          <button type="submit" class="button is-primary mt-5">Save change</button>
+          <button type="submit" class="button is-primary mt-5">Save</button>
           <p id="editMessage" class="is-hidden help mb-3"></p>
         </form>
         <!-- Your content -->

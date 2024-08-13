@@ -16,7 +16,7 @@ const start = async () => {
       process.env.HEROKU_DATABASE_URL || process.env.DATABASE_URL
     );
     app.listen(port, () => {
-      console.log(`ToDo app listening on port ${port}`);
+      console.log(`To-Do App listening on port ${port}`);
     });
   } catch (err) {
     console.error("Error starting the server:", err);
