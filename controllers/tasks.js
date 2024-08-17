@@ -2,53 +2,53 @@ const Task = require("../models/Task");
 
 const getAllTasks = async (req, res) => {
   try {
-    const allTasks = await Task.find({});
-    res.status(200).json(allTasks);
+    const tasks = await Task.find({});
+    res.status(200).json(tasks);
   } catch (err) {
     res.status(500).json(err);
   }
 };
 const createTask = async (req, res) => {
   try {
-    const createTask = await Task.create(req.body);
-    res.status(200).json(createTask);
+    const createdTask = await Task.create(req.body);
+    res.status(200).json(createdTask);
   } catch (err) {
     res.status(500).json(err);
   }
 };
 const getSingleTask = async (req, res) => {
   try {
-    const singleTask = await Task.findOne({ _id: req.params.id });
-    if (!singleTask) {
+    const task = await Task.findOne({ _id: req.params.id });
+    if (!task) {
       return res.status(404).json(`_id: ${req.params.id} is not found.`);
     }
-    res.status(200).json(singleTask);
+    res.status(200).json(task);
   } catch (err) {
     res.status(500).json(err);
   }
 };
 const updateTask = async (req, res) => {
   try {
-    const updateTask = await Task.findOneAndUpdate(
+    const updatedTask = await Task.findOneAndUpdate(
       { _id: req.params.id },
       req.body,
       { new: true }
     );
-    if (!updateTask) {
+    if (!updatedTask) {
       return res.status(404).json(`_id: ${req.params.id} is not found.`);
     }
-    res.status(200).json(updateTask);
+    res.status(200).json(updatedTask);
   } catch (err) {
     res.status(500).json(err);
   }
 };
 const deleteTask = async (req, res) => {
   try {
-    const deleteTask = await Task.findOneAndDelete({ _id: req.params.id });
-    if (!deleteTask) {
+    const deletedTask = await Task.findOneAndDelete({ _id: req.params.id });
+    if (!deletedTask) {
       return res.status(404).json(`_id: ${req.params.id} is not found.`);
     }
-    res.status(200).json(deleteTask);
+    res.status(200).json(deletedTask);
   } catch (err) {
     res.status(500).json(err);
   }
